@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/Bajron/octogo/octogo"
 )
 
 var inFile, outFile string
@@ -46,4 +47,5 @@ func main() {
 	}
 
 	fmt.Printf("Processing %s -> %s!\n", inFile, outFile)
+	octogo.Process(inFile, outFile, octogo.Copy)
 }
