@@ -40,3 +40,25 @@ func TestGetModes(t *testing.T) {
 		t.Error("There should be 'copy' in modes.")
 	}
 }
+
+func TestGetEncoders(t *testing.T) {
+	encs := GetEncoders()
+	if len(encs) < 1 {
+		t.Error("There should be at least one encoder")
+	}
+
+	hasPng := false
+	for _, v := range encs {
+		if v == "png" {
+			hasPng = true
+			break
+		}
+	}
+	if !hasPng {
+		t.Error("There should be PNG encoder.")
+	}
+
+	if len(encs) != len(encoders) {
+		t.Error("There should be as many encoders as registered.")
+	}
+}

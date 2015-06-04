@@ -5,7 +5,7 @@ import (
 	//_ "golang.org/x/image/bmp"
 	"image/color"
 	_ "image/gif"
-	_ "image/jpeg"
+	"image/jpeg"
 	"image/png"
 	"io"
 	"log"
@@ -25,6 +25,8 @@ var processors map[string]ProcessingFunction
 func init() {
 	encoders = make(map[string]Encoder)
 	encoders[".png"] = PngEncoder{}
+	encoders[".jpg"] = JpgEncoder{}
+	encoders[".jpeg"] = JpgEncoder{}
 
 	processors = make(map[string]ProcessingFunction)
 	processors["copy"] = Copy
@@ -36,6 +38,12 @@ type PngEncoder struct{}
 
 func (PngEncoder) Encode(writer io.Writer, img image.Image) error {
 	return png.Encode(writer, img)
+}
+
+type JpgEncoder struct{}
+
+func (JpgEncoder) Encode(writer io.Writer, img image.Image) error {
+	return jpeg.Encode(writer, img, nil)
 }
 
 func GetProcessingFunction(name string) ProcessingFunction {
@@ -51,6 +59,16 @@ func GetModes() []string {
 	idx := 0
 	for k, _ := range processors {
 		ret[idx] = k
+		idx++
+	}
+	return ret
+}
+
+func GetEncoders() []string {
+	ret := make([]string, len(encoders))
+	idx := 0
+	for k, _ := range encoders {
+		ret[idx] = k[1:]
 		idx++
 	}
 	return ret
