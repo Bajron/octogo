@@ -8,17 +8,19 @@ import (
 	"path/filepath"
 )
 
-var inFile, outFile string
+var inFile, outFile, mode string
 
 const (
 	DEFAULT_INPUT  = "in.(png|jpg|bmp|gif)"
 	DEFAULT_OUTPUT = "out.(png|jpg|bmp|gif)"
+	DEFAULT_MODE   = "(copy|gray)"
 )
 
 func init() {
 	const (
-		INPUT_USAGE = "specifies a file to read (jpg,png,gif or bmp)"
-		OUPUT_USAGE = "specifies output filename"
+		INPUT_USAGE = "a file to read (jpg,png,gif or bmp)"
+		OUPUT_USAGE = "output filename"
+		MODE_USAGE  = "processing function"
 	)
 
 	flag.StringVar(&inFile, "input", DEFAULT_INPUT, INPUT_USAGE)
@@ -26,6 +28,9 @@ func init() {
 
 	flag.StringVar(&outFile, "output", DEFAULT_OUTPUT, OUPUT_USAGE)
 	flag.StringVar(&outFile, "o", DEFAULT_OUTPUT, OUPUT_USAGE+" (shorthand for --output)")
+
+	flag.StringVar(&mode, "mode", DEFAULT_MODE, MODE_USAGE)
+	flag.StringVar(&mode, "m", DEFAULT_MODE, MODE_USAGE+" (shorthand for --mode)")
 }
 
 func main() {
@@ -48,11 +53,15 @@ func main() {
 		outFile = "out.png"
 	}
 
+	if mode == DEFAULT_MODE {
+		mode = "copy"
+	}
+
 	ext := filepath.Ext(outFile)
 	if ext == "" {
 		outFile += ".png"
 	}
 
-	log.Printf("Processing %s -> %s!\n", inFile, outFile)
-	octogo.Process(inFile, outFile, octogo.Copy)
+	log.Printf("Processing %s -[%s]-> %s!\n", inFile, mode, outFile)
+	octogo.Process(inFile, outFile, octogo.GetProcessingFunction(mode))
 }
