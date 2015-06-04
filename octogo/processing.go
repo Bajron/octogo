@@ -29,6 +29,7 @@ func init() {
 	processors = make(map[string]ProcessingFunction)
 	processors["copy"] = Copy
 	processors["gray"] = Grayscale
+	processors["mean_horizontal"] = MeanHorizontal
 }
 
 type PngEncoder struct{}
