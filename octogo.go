@@ -13,7 +13,7 @@ var inFile, outFile, mode string
 const (
 	DEFAULT_INPUT  = "in.(png|jpg|bmp|gif)"
 	DEFAULT_OUTPUT = "out.(png|jpg|bmp|gif)"
-	DEFAULT_MODE   = "(copy|gray)"
+	DEFAULT_MODE   = "(copy|gray|...)"
 )
 
 func init() {

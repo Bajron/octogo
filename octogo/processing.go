@@ -46,6 +46,16 @@ func GetProcessingFunction(name string) ProcessingFunction {
 	return f
 }
 
+func GetModes() []string {
+	ret := make([]string, len(processors))
+	idx := 0
+	for k, _ := range processors {
+		ret[idx] = k
+		idx++
+	}
+	return ret
+}
+
 func Copy(src image.Image) image.Image {
 	bounds := src.Bounds()
 	ret := image.NewRGBA(bounds)
