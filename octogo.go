@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Bajron/octogo/octogo"
+	"log"
+	"path/filepath"
 )
 
 var inFile, outFile string
@@ -46,6 +48,11 @@ func main() {
 		outFile = "out.png"
 	}
 
-	fmt.Printf("Processing %s -> %s!\n", inFile, outFile)
+	ext := filepath.Ext(outFile)
+	if ext == "" {
+		outFile += ".png"
+	}
+
+	log.Printf("Processing %s -> %s!\n", inFile, outFile)
 	octogo.Process(inFile, outFile, octogo.Copy)
 }

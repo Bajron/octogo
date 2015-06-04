@@ -6,9 +6,30 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	"image/png"
+	"io"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 )
+
+type ProcessFunction func(image.Image) image.Image
+type Encoder interface {
+	Encode(writer io.Writer, img image.Image) error
+}
+
+var encoders map[string]Encoder
+
+func init() {
+	encoders = make(map[string]Encoder)
+	encoders[".png"] = PngEncoder{}
+}
+
+type PngEncoder struct{}
+
+func (PngEncoder) Encode(writer io.Writer, img image.Image) error {
+	return png.Encode(writer, img)
+}
 
 func Copy(src image.Image) image.Image {
 	bounds := src.Bounds()
@@ -20,8 +41,6 @@ func Copy(src image.Image) image.Image {
 	}
 	return ret
 }
-
-type ProcessFunction func(image.Image) image.Image
 
 func Process(src, dst string, f ProcessFunction) {
 	reader, err := os.Open(src)
@@ -37,6 +56,7 @@ func Process(src, dst string, f ProcessFunction) {
 
 	processed := f(img)
 	if processed == nil {
+		log.Println("Processing failed :C")
 		return
 	}
 	writer, err := os.Create(dst)
@@ -45,7 +65,10 @@ func Process(src, dst string, f ProcessFunction) {
 	}
 	defer writer.Close()
 
-	err = png.Encode(writer, processed)
+	ext := strings.ToLower(filepath.Ext(dst))
+
+	log.Printf("Encoding [%s] to %s", ext, dst)
+	err = encoders[ext].Encode(writer, processed)
 	if err != nil {
 		log.Fatal(err)
 	}
